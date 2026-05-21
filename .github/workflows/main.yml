@@ -1,0 +1,26 @@
+name: Build node js
+on:
+  workflow_dispatch:
+  push:
+    branches:
+        - master
+  pull_request:
+    branches:
+        - master
+jobs:
+  job1:
+    runs-on: ubuntu-latest
+    steps:
+      - name: clone the repo
+        uses: actions/checkout@v6
+      - name: install node js
+        uses: actions/setup-node@v6
+        with:
+          node-version: '18'  
+          cache: 'npm'
+      - name: install node dependencies
+        run: npm ci
+      - name: run tests
+        run: npm test   
+      - name: build
+        run: npm run build    
