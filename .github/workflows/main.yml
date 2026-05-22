@@ -1,26 +1,39 @@
-name: Build node js
+name: matrix strategy demo
 on:
-  workflow_dispatch:
-  push:
-    branches:
-        - master
-  pull_request:
-    branches:
-        - master
+    workflow_dispatch:
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
 jobs:
-  job1:
-    runs-on: ubuntu-latest
-    steps:
-      - name: clone the repo
-        uses: actions/checkout@v6
-      - name: install node js
-        uses: actions/setup-node@v6
-        with:
-          node-version: '18'  
-          cache: 'npm'
-      - name: install node dependencies
-        run: npm ci
-      - name: run tests
-        run: npm test   
-      - name: build
-        run: npm run build    
+    job1:
+        continue-on-error: true
+        strategy:
+            matrix:
+                node-version: [14, 16, 18]
+                operating-system: [ubuntu-latest, windows-latest, macos-latest]
+                exclude:
+                - node-version: 14
+                  operating-system: ubuntu-latest
+                - node-version: 14
+                  operating-system: windows-latest
+        runs-on: ${{ matrix.operating-system }}
+        steps:
+            - name: clone the repository
+              uses: actions/checkout@v6
+            - name: install node js
+              uses: actions/setup-node@v3
+              with:
+                node-version: ${{ matrix.node-version }}
+                cache: 'npm'
+            - name: install dependencies
+              run: npm ci
+            - name: run tests
+              run: npm test
+            - name: build the code
+              run: npm run build   
+            - name: deploy the code
+              run: echo "deploying the code"
+
