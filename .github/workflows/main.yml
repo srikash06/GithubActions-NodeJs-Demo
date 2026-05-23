@@ -1,23 +1,33 @@
-name: build nodejs Application 
+name: Multiple Runner
 on: 
  workflow_dispatch:
+    inputs:
+      runner:
+        description: 'select the runner'
+        required: true
+        type: string
+      jobs-name:
+        description: 'Enter the job name'
+        required: true
+        type: string
 jobs: 
-  job1:
+  build:
    continue-on-error: true
-   runs-on: self-hosted
+   if: ${{ contains(github.event.inputs.jobs-name, 'build') }}
+   runs-on: ${{ github.event.inputs.runner }}
    steps: 
-    - name: Clone the repo 
-      uses: actions/checkout@v4
-    - name: Install nodejs
-      uses: actions/setup-node@v4
-      with: 
-          node-version: 18
-          cache: 'npm'
-    - name: Install dependencies 
-      run: npm ci 
+    - name: build the code 
+      run: echo "Build the code"
+
+  test:
+   if: ${{ contains(github.event.inputs.jobs-name, 'test') }}
+   runs-on: ${{ github.event.inputs.runner }}
+   steps:
     - name: Executes test cases
-      run: npm test
-    - name: Build the code 
-      run: npm run build 
-    - name: Deploy the code 
-      run: echo 'Deploy the code'
+      run: echo "Execute the test cases"
+  deploy:
+   if: ${{ contains(github.event.inputs.jobs-name, 'deploy') }} 
+   runs-on: ${{ github.event.inputs.runner }} 
+   steps:
+     - name: Deploy the code 
+       run: echo "Deploy the code"
