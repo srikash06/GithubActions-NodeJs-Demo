@@ -1,60 +1,24 @@
-name: build node js application with needs keyword
-on:
-    workflow_dispatch:
-    push:
-        branches:
-            - master
-    pull_request:
-        branches:
-            - master
-jobs:
-    job1:
-      needs: job2
-      continue-on-error: true
-      strategy:
-          matrix:
-              node-version: [16, 18]
-              operating-system: [ubuntu-latest]
-              include:
-              - node-version: 14
-                operating-system: ubuntu-latest
-      runs-on: ${{ matrix.operating-system }}
-      steps:
-        - name: clone the repository
-          uses: actions/checkout@v6
-        - name: install node js
-          uses: actions/setup-node@v3
-          with:
-            node-version: ${{ matrix.node-version }}
-            cache: 'npm'
-        - name: install dependencies
-          run: npm ci
-        - name: run tests
-          run: npm test
-        - name: build the code
-          run: npm run build
-        - name: deploy the code
-          run: echo "deploying the code"
-    job2:
-      strategy:
-          matrix:
-              node-version: [14, 18]
-              operating-system: [windows-latest]
-      runs-on: ${{ matrix.operating-system }}
-      steps:
-        - name: clone the repository
-          uses: actions/checkout@v6
-        - name: install node js
-          uses: actions/setup-node@v3
-          with:
-            node-version: ${{ matrix.node-version }}
-            cache: 'npm'
-        - name: install dependencies
-          run: npm ci
-        - name: run tests
-          run: npm test
-        - name: build the code
-          run: npm run build
-        - name: deploy the code
-          run: echo "deploying the code"
-        
+name: build nodejs Application 
+on: 
+ workflow_dispatch:
+ push:
+jobs: 
+  job1:
+   continue-on-error: true
+   runs-on: self-hosted
+   steps: 
+    - name: Clone the repo 
+      uses: actions/checkout@v4
+    - name: Install nodejs
+      uses: actions/setup-node@v4
+      with: 
+          node-version: 18
+          cache: 'npm'
+    - name: Install dependencies 
+      run: npm ci 
+    - name: Executes test cases
+      run: npm test
+    - name: Build the code 
+      run: npm run build 
+    - name: Deploy the code 
+      run: echo 'Deploy the code'
