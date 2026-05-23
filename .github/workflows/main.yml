@@ -1,7 +1,6 @@
 name: build nodejs Application 
 on: 
  workflow_dispatch:
- push:
 jobs: 
   job1:
    continue-on-error: true
